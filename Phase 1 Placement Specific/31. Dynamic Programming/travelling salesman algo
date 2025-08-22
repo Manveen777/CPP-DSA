@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+
+int n;
+vector<vector<int>> dist;
+vector<vector<int>> dp;
+
+int tsp(int city, int mask) {
+    if (mask == (1 << n) - 1) // all cities visited
+        return dist[city][0]; // return to start
+
+    if (dp[city][mask] != -1)
+        return dp[city][mask];
+
+    int ans = INF;
+    for (int next = 0; next < n; next++) {
+        if (!(mask & (1 << next))) { // if not visited
+            ans = min(ans, dist[city][next] + tsp(next, mask | (1 << next)));
+        }
+    }
+    return dp[city][mask] = ans;
+}
+
+int main() {
+    // Example distance matrix
+    dist = {
+        {0, 10, 15, 20},
+        {10, 0, 35, 25},
+        {15, 35, 0, 30},
+        {20, 25, 30, 0}
+    };
+
+    n = dist.size();
+    dp.assign(n, vector<int>(1 << n, -1));
+
+    cout << "Minimum TSP cost: " << tsp(0, 1) << endl;
+    return 0;
+}
